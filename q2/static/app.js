@@ -30,11 +30,11 @@ function showInput(blob) {
 }
 
 async function run(blob, showPreview) {
-  if (busy) return;
+  if (busy || !blob) return; // toBlob gives null if the camera isn't ready yet
   busy = true;
-  if (showPreview) showInput(blob);
   setStatus("Converting…");
   try {
+    if (showPreview) showInput(blob);
     const t0 = performance.now();
     const res = await convert(blob);
     els.output.src = res.image; // server-generated data:image/png URL
@@ -51,6 +51,7 @@ async function run(blob, showPreview) {
 
 function frameBlob() {
   const { video, canvas } = els;
+  if (!video.videoWidth) return Promise.resolve(null);
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
   canvas.getContext("2d").drawImage(video, 0, 0);

@@ -5,7 +5,7 @@ import io
 import logging
 
 from flask import Flask, jsonify, render_template, request
-from PIL import Image, UnidentifiedImageError
+from PIL import Image, ImageOps, UnidentifiedImageError
 
 from inference import DIRECTIONS, is_sketch, load_generators, pick_device, translate
 
@@ -37,7 +37,7 @@ def read_upload(file):
         img = Image.open(file.stream)
         if img.width * img.height > MAX_PIXELS:
             return None
-        return img.convert("RGB")
+        return ImageOps.exif_transpose(img).convert("RGB")  # phone photos carry rotation in EXIF
     except (UnidentifiedImageError, OSError, SyntaxError, Image.DecompressionBombError):
         return None
 
@@ -70,7 +70,7 @@ def create_app(generators, image_size, device):
         direction = mode if mode != "auto" else ("sketch2photo" if detected == "sketch" else "photo2sketch")
         try:
             out = translate(generators[direction], img, image_size, device)
-        except RuntimeError:
+        except Exception:  # noqa: BLE001 - always answer JSON; details go to the log only
             log.exception("translation failed direction=%s size=%s", direction, img.size)
             return jsonify(error="conversion failed"), 500
         return jsonify(detected=detected, direction=direction, image=to_data_url(out))

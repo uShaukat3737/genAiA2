@@ -8,6 +8,7 @@ from torch.utils.data import Dataset
 from torchvision import transforms
 
 IMG_EXTS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
+SUBSAMPLE_SEED = 0
 RESIZE_MARGIN = 1.12  # paper: resize 256 -> 286, random-crop back to 256
 
 
@@ -40,12 +41,19 @@ def build_transform(image_size, train):
     return transforms.Compose(resize + [transforms.ToTensor(), transforms.Normalize([0.5] * 3, [0.5] * 3)])
 
 
+def subsample(paths, n, seed=SUBSAMPLE_SEED):
+    """Seeded random subset, so --max_samples is reproducible and doesn't just take the first folder."""
+    if not n or n >= len(paths):
+        return paths
+    return sorted(random.Random(seed).sample(paths, n))
+
+
 class UnpairedDataset(Dataset):
     """Returns (photo, sketch); the sketch is sampled at random so pairs are never aligned."""
 
     def __init__(self, photos, sketches, image_size=256, train=True, max_samples=None):
-        self.photos = photos[:max_samples] if max_samples else photos
-        self.sketches = sketches[:max_samples] if max_samples else sketches
+        self.photos = subsample(photos, max_samples)
+        self.sketches = subsample(sketches, max_samples)
         self.transform = build_transform(image_size, train)
         self.train = train
 

@@ -32,7 +32,7 @@ def parse_args(argv=None):
     p.add_argument("--photo_dir", help="explicit photo folder (overrides auto split)")
     p.add_argument("--sketch_dir", help="explicit sketch folder (overrides auto split)")
     p.add_argument("--checkpoint_dir", default="./checkpoints", help="put this on Google Drive in Colab")
-    p.add_argument("--epochs", type=int, default=40, help="total epochs (resume continues up to this)")
+    p.add_argument("--epochs", type=int, default=30, help="total epochs (resume continues up to this)")
     p.add_argument("--decay_epoch", type=int, default=None, help="epoch where linear LR decay starts (default epochs/2)")
     p.add_argument("--batch_size", type=int, default=1, help="paper uses 1")
     p.add_argument("--lr", type=float, default=2e-4)
@@ -45,7 +45,7 @@ def parse_args(argv=None):
     p.add_argument("--max_samples", type=int, default=None, help="cap images per domain (memory/time)")
     p.add_argument("--num_workers", type=int, default=2)
     p.add_argument("--log_every", type=int, default=100, help="iterations between log lines")
-    p.add_argument("--snapshot_every", type=int, default=1, help="keep epoch_XXX.pth generator weights every N epochs, 0=off")
+    p.add_argument("--snapshot_every", type=int, default=5, help="keep epoch_XXX.pth generator weights every N epochs, 0=off")
     p.add_argument("--resume", default="auto", help="'auto' = checkpoint_dir/latest.pth if present, a path, or 'none'")
     p.add_argument("--amp", action="store_true", help="mixed precision (CUDA only)")
     p.add_argument("--device", default="auto", choices=["auto", "cuda", "mps", "cpu"])
@@ -80,6 +80,13 @@ class ImagePool:
         return torch.cat(out)
 
 
+def make_lr_lambda(args):
+    """Constant LR for decay_epoch epochs, then linear to ~0 at the last epoch (paper / official code)."""
+    def linear_decay(epoch):  # epoch is 0-based
+        return 1.0 - max(0, epoch + 1 - args.decay_epoch) / float(args.epochs - args.decay_epoch + 1)
+    return linear_decay
+
+
 def build(args, device):
     nets = {
         "G_AB": Generator(n_blocks=args.n_blocks), "G_BA": Generator(n_blocks=args.n_blocks),
@@ -90,10 +97,7 @@ def build(args, device):
     opt_G = torch.optim.Adam(itertools.chain(nets["G_AB"].parameters(), nets["G_BA"].parameters()), args.lr, betas=betas)
     opt_D = torch.optim.Adam(itertools.chain(nets["D_A"].parameters(), nets["D_B"].parameters()), args.lr, betas=betas)
 
-    def linear_decay(epoch):
-        return 1.0 - max(0, epoch - args.decay_epoch) / float(args.epochs - args.decay_epoch + 1)
-
-    scheds = [torch.optim.lr_scheduler.LambdaLR(o, linear_decay) for o in (opt_G, opt_D)]
+    scheds = [torch.optim.lr_scheduler.LambdaLR(o, make_lr_lambda(args)) for o in (opt_G, opt_D)]
     return nets, opt_G, opt_D, scheds
 
 
@@ -113,16 +117,30 @@ def save_checkpoint(path, epoch, args, nets, opt_G, opt_D, scheds, scaler):
     }, path)
 
 
-def load_checkpoint(path, nets, opt_G, opt_D, scheds, scaler, device):
+def load_checkpoint(path, nets, opt_G, opt_D, scheds, scaler, device, args):
     state = torch.load(path, map_location=device, weights_only=False)
+    check_compatible(state["args"], args)
     for k, net in nets.items():
         net.load_state_dict(state[k])
     opt_G.load_state_dict(state["opt_G"])
     opt_D.load_state_dict(state["opt_D"])
     scheds[0].load_state_dict(state["sched_G"])
     scheds[1].load_state_dict(state["sched_D"])
-    scaler.load_state_dict(state["scaler"])
+    if state["scaler"] and scaler.is_enabled():  # a disabled scaler saves {}
+        scaler.load_state_dict(state["scaler"])
+    # lr follows the *current* --epochs/--decay_epoch, so extending a run doesn't make lr jump
+    for opt, sched in ((opt_G, scheds[0]), (opt_D, scheds[1])):
+        for group, base in zip(opt.param_groups, sched.base_lrs):
+            group["lr"] = base * sched.lr_lambdas[0](sched.last_epoch)
     return state["epoch"]
+
+
+def check_compatible(saved, args):
+    if saved["n_blocks"] != args.n_blocks:
+        raise ValueError(f"checkpoint has n_blocks={saved['n_blocks']} but --n_blocks={args.n_blocks}; "
+                         "pass the same value or use a new --checkpoint_dir")
+    if saved["lr"] != args.lr:
+        log.warning("--lr %g ignored on resume; checkpoint was trained with %g", args.lr, saved["lr"])
 
 
 def resume_path(args, ckpt_dir):
@@ -219,7 +237,7 @@ def main(argv=None):
     start_epoch = 0
     path = resume_path(args, ckpt_dir)
     if path:
-        start_epoch = load_checkpoint(path, nets, opt_G, opt_D, scheds, scaler, device)
+        start_epoch = load_checkpoint(path, nets, opt_G, opt_D, scheds, scaler, device, args)
         log.info("resumed from %s at epoch %d", path, start_epoch)
     if start_epoch >= args.epochs:
         log.info("already trained %d/%d epochs; raise --epochs to continue", start_epoch, args.epochs)

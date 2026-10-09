@@ -73,7 +73,7 @@ def test_train_saves_every_epoch_and_resumes(tmp_path):
     data, ckpt = tmp_path / "data", tmp_path / "ckpt"
     _make_dataset(data)
     common = ["--data_dir", str(data), "--checkpoint_dir", str(ckpt), "--image_size", "32",
-              "--n_blocks", "1", "--batch_size", "2", "--num_workers", "0", "--device", "cpu"]
+              "--n_blocks", "1", "--batch_size", "2", "--num_workers", "0", "--device", "cpu", "--snapshot_every", "1"]
     train.main(common + ["--epochs", "1"])
     assert (ckpt / "latest.pth").exists() and (ckpt / "epoch_001.pth").exists()
     assert torch.load(ckpt / "latest.pth", weights_only=False)["epoch"] == 1
