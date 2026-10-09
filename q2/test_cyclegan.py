@@ -119,3 +119,31 @@ def test_convert_auto_detects_sketch(client):
     assert body["detected"] == "sketch" and body["direction"] == "sketch2photo"
     assert body["image"].startswith("data:image/png;base64,")
     assert resp.headers["X-Content-Type-Options"] == "nosniff"
+
+
+def test_lr_schedule_decays_to_near_zero():
+    import train
+    args = train.parse_args(["--epochs", "10"])
+    f = train.make_lr_lambda(args)
+    assert f(0) == 1.0 and f(args.decay_epoch - 1) == 1.0
+    assert f(9) <= 1 / (10 - args.decay_epoch + 1) + 1e-9
+    assert all(f(e + 1) <= f(e) for e in range(9))
+
+
+def test_max_samples_draws_across_whole_list():
+    from dataset import UnpairedDataset
+    paths = [f"{i:04d}" for i in range(1000)]
+    ds = UnpairedDataset(paths, paths, image_size=32, max_samples=50)
+    assert len(ds.photos) == 50 and max(ds.photos) > "0100"  # not just the first 50 sorted
+    assert UnpairedDataset(paths, paths, image_size=32, max_samples=50).photos == ds.photos  # deterministic
+
+
+def test_resume_with_different_architecture_fails_clearly(tmp_path):
+    import train
+    data, ckpt = tmp_path / "data", tmp_path / "ckpt"
+    _make_dataset(data)
+    common = ["--data_dir", str(data), "--checkpoint_dir", str(ckpt), "--image_size", "32",
+              "--batch_size", "2", "--num_workers", "0", "--device", "cpu", "--epochs", "2"]
+    train.main(common + ["--n_blocks", "1", "--epochs", "1"])
+    with pytest.raises(ValueError, match="n_blocks"):
+        train.main(common + ["--n_blocks", "2"])
