@@ -11,6 +11,7 @@ auto-detects whether an input is a sketch or a photo and converts it.
 | `train.py` | End-to-end training, checkpoint every epoch, auto-resume |
 | `inference.py` | Load generators, sketch/photo detector, single-image CLI |
 | `app.py` + `templates/` + `static/` | Flask UI: upload, camera capture, live mode |
+| `colab_run.ipynb` | Colab notebook covering the whole pipeline |
 | `test_cyclegan.py` | Smoke tests (`python -m pytest -q`) |
 
 ## Method (as in the paper)
@@ -21,7 +22,7 @@ auto-detects whether an input is a sketch or a photo and converts it.
 
 ## Google Colab
 
-Set the runtime to GPU, then run these cells:
+The easiest way is to open **`colab_run.ipynb`** and run it top to bottom. It goes through setup, a hyperparameter sweep, full training, monitoring, a test of both directions, and the web UI. The same steps as plain cells:
 
 ```python
 # 1. Code + Drive (checkpoints go to Drive so they survive disconnects)
@@ -81,3 +82,14 @@ python -m pytest -q test_cyclegan.py
 The detector is a heuristic in `inference.is_sketch`. An image counts as a sketch when its average colour saturation
 is below 0.12 and more than 35% of its pixels are bright. If it gets an image wrong, the UI has a manual direction
 selector that overrides it.
+
+## Results (fill in after the Colab run)
+> Nothing below has been measured yet. Copy it from the notebook outputs.
+
+**Hyperparameter tuning:** the table from notebook section 4 (final-epoch `loss_cycle` for each lr/batch size), plus which setting you picked and why.
+
+**Training curves:** the loss plot and the last rows of `history.csv` from section 6. Note how many epochs you trained and roughly how long each took.
+
+**Qualitative results:** a sample grid from the final epoch and the two section 7 outputs (photo → sketch, sketch → photo), with a short comment on what works and what fails.
+
+**UI:** a screenshot of the web UI converting an uploaded image and a camera frame.
