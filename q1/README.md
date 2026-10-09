@@ -124,39 +124,27 @@ Visualizations display three synchronized rows:
 
 ## Experimental Study & Findings
 
+> **Results pending: these come from the Colab run.** Run the *Experimental Study* section of `colab_run.ipynb`.
+> It trains one model per setting and writes everything to `experiments_output/`:
+> - `noise_study_results.csv` and `noise_study_curves.png`
+> - `bottleneck_study_results.csv` and `bottleneck_study_curves.png`
+> - `experimental_study_report.md`, which has both tables in Markdown
+>
+> Paste the two tables from `experimental_study_report.md` below, then write the observations from those numbers.
+
 ### Study 1: Impact of Noise Intensity
-Evaluated across varying noise levels with a 32-channel bottleneck:
+Bottleneck fixed at 32 channels. Gaussian σ ∈ {0.05, 0.10, 0.20, 0.30}; salt-and-pepper p ∈ {0.02, 0.05, 0.10, 0.20}.
 
-| Noise Type | Noise Parameter | Input PSNR (dB) | Input SSIM | Output PSNR (dB) | Output SSIM | $\Delta$ PSNR (dB) |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Gaussian** | $\sigma = 0.05$ | 26.02 | 0.7381 | **29.84** | **0.8710** | +3.82 |
-| **Gaussian** | $\sigma = 0.10$ | 20.35 | 0.4832 | **27.45** | **0.8015** | +7.10 |
-| **Gaussian** | $\sigma = 0.20$ | 14.38 | 0.2541 | **24.12** | **0.6980** | +9.74 |
-| **Gaussian** | $\sigma = 0.30$ | 10.92 | 0.1530 | **21.85** | **0.6120** | +10.93 |
-| **Salt & Pepper** | $p = 0.02$ | 22.15 | 0.6120 | **31.20** | **0.9125** | +9.05 |
-| **Salt & Pepper** | $p = 0.05$ | 18.24 | 0.4410 | **28.90** | **0.8540** | +10.66 |
-| **Salt & Pepper** | $p = 0.10$ | 15.20 | 0.3150 | **26.75** | **0.7930** | +11.55 |
-| **Salt & Pepper** | $p = 0.20$ | 12.18 | 0.1890 | **23.60** | **0.6840** | +11.42 |
+*(table from `experimental_study_report.md`)*
 
-**Observations:**
-- At lower noise levels ($\sigma = 0.05, p = 0.02$), the network acts as a fine detail filter, restoring fine textures with high fidelity ($>30$ dB).
-- At high noise levels ($\sigma = 0.30$), input PSNR drops severely, but the autoencoder provides over $+10\text{ dB}$ PSNR improvement by filtering stochastic noise and recovering structural edges.
+**Observations:** *(fill in after the run: how ΔPSNR/SSIM change with noise level, Gaussian vs salt-and-pepper)*
 
 ### Study 2: Impact of Bottleneck Size
-Evaluated under Gaussian noise ($\sigma = 0.15$) across bottleneck channel capacities:
+Gaussian noise σ = 0.15; bottleneck channels ∈ {8, 16, 32, 64, 128}.
 
-| Bottleneck Channels | Total Parameters | Compression Ratio | Output PSNR (dB) | Output SSIM | $\Delta$ PSNR (dB) |
-| :---: | :---: | :---: | :---: | :---: | :---: |
-| **8** | 127,155 | 6.00x | 23.85 | 0.7020 | +7.40 |
-| **16** | 141,947 | 3.00x | 25.10 | 0.7485 | +8.65 |
-| **32** | 171,531 | 1.50x | **26.25** | **0.7810** | +9.80 |
-| **64** | 230,707 | 0.75x | **26.42** | **0.7865** | +9.97 |
-| **128** | 349,059 | 0.38x | 26.48 | 0.7880 | +10.03 |
+*(table from `experimental_study_report.md`)*
 
-**Observations:**
-- **Extreme Bottleneck ($C_{\text{btn}} = 8$):** High compression ($6\times$) causes information loss, resulting in slightly blurred reconstructions.
-- **Optimal Trade-off ($C_{\text{btn}} = 32$ to $64$):** Maximizes PSNR and SSIM while maintaining compact parameter count.
-- **Diminishing Returns ($C_{\text{btn}} = 128$):** Adding channels beyond 64 doubles parameter count with negligible gain ($<0.1\text{ dB}$).
+**Observations:** *(fill in after the run: quality vs compression ratio and parameter count, where the gains level off)*
 
 ---
 
