@@ -1,0 +1,16 @@
+{
+  "input_mse": 0.00925418256316334,
+  "input_psnr": 20.34523620302351,
+  "input_ssim": 0.4832170907407999,
+  "output_mse": 0.02601736056851223,
+  "output_psnr": 16.431511493721924,
+  "output_ssim": 0.4349783743917942,
+  "delta_psnr": -3.9137247093015866,
+  "delta_ssim": -0.04823871634900567,
+  "total_evaluated_samples": 200,
+  "checkpoint": "checkpoints/dae_gaussian_p0.1_btn32_mse/best_model.pth",
+  "split": "test",
+  "noise_type": "gaussian",
+  "noise_param": 0.1,
+  "bottleneck": 32
+}
