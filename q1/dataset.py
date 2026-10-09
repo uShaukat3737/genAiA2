@@ -122,21 +122,15 @@ def download_and_extract_bsds500(target_dir: str) -> str:
                 shutil.copytree(src_split, dst_split)
         return str(target_path)
         
-    import ssl
     print(f"[Dataset] Downloading BSDS500 archive from GitHub mirror...")
     zip_url = "https://github.com/BIDS/BSDS500/archive/refs/heads/master.zip"
     
     try:
-        # Create SSL context that does not fail on macOS systems missing CA certificates
-        ssl_context = ssl.create_default_context()
-        ssl_context.check_hostname = False
-        ssl_context.verify_mode = ssl.CERT_NONE
-        
         req = urllib.request.Request(
             zip_url,
             headers={"User-Agent": "Mozilla/5.0 (DAE-Denoising-Dataset-Downloader)"}
         )
-        with urllib.request.urlopen(req, context=ssl_context) as response:
+        with urllib.request.urlopen(req) as response:
             zip_bytes = response.read()
         print(f"[Dataset] Download complete ({len(zip_bytes) / 1024 / 1024:.2f} MB). Extracting...")
         
@@ -185,6 +179,9 @@ def download_and_extract_bsds500(target_dir: str) -> str:
             raise e
 
 
+TRAIN_CROPS_PER_IMAGE = 8  # random crops per training image per epoch
+
+
 class BSDS500Dataset(Dataset):
     """
     PyTorch Dataset for Berkeley Segmentation Dataset (BSDS500) paired with noisy input generation.
@@ -218,6 +215,7 @@ class BSDS500Dataset(Dataset):
         self.noise_param = noise_param
         self.is_train = is_train
         self.seed = seed
+        self.crops_per_image = TRAIN_CROPS_PER_IMAGE if is_train else 1
         
         split_dir = self.data_dir / split
         if not split_dir.exists():
@@ -235,10 +233,10 @@ class BSDS500Dataset(Dataset):
             )
             
     def __len__(self) -> int:
-        return len(self.image_paths)
+        return len(self.image_paths) * self.crops_per_image
         
     def __getitem__(self, idx: int):
-        img_path = self.image_paths[idx]
+        img_path = self.image_paths[idx % len(self.image_paths)]
         image = Image.open(img_path).convert("RGB")
         
         # Geometry transforms

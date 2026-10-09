@@ -76,10 +76,10 @@ Input (3 x 128 x 128)
    [ConvTranspose2d (64→32, stride 2) + BN + LeakyReLU]
    [Conv2d (32→32) + BN + LeakyReLU]              -> (32 x 64 x 64)
        │
-   [ConvTranspose2d (32→16, stride 2) + BN + LeakyReLU]
-   [Conv2d (16→16) + BN + LeakyReLU]              -> (16 x 128 x 128)
+   [ConvTranspose2d (32→32, stride 2) + BN + LeakyReLU]
+   [Conv2d (32→32) + BN + LeakyReLU]              -> (32 x 128 x 128)
        │
-   [Conv2d (16→3) + Sigmoid]                      -> Output (3 x 128 x 128)
+   [Conv2d (32→3) + Sigmoid]                      -> Output (3 x 128 x 128)
 ```
 
 ### Architectural Highlights
@@ -140,7 +140,7 @@ Bottleneck fixed at 32 channels. Gaussian σ ∈ {0.05, 0.10, 0.20, 0.30}; salt-
 **Observations:** *(fill in after the run: how ΔPSNR/SSIM change with noise level, Gaussian vs salt-and-pepper)*
 
 ### Study 2: Impact of Bottleneck Size
-Gaussian noise σ = 0.15; bottleneck channels ∈ {8, 16, 32, 64, 128}.
+Gaussian noise σ = 0.15; bottleneck channels ∈ {8, 16, 32, 64, 128}. With 64 and 128 channels the latent is *larger* than the input (compression 0.75× and 0.38×), so those settings don't act as a real bottleneck. Mention this in the discussion.
 
 *(table from `experimental_study_report.md`)*
 

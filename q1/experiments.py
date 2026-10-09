@@ -176,6 +176,7 @@ def run_noise_level_study(args, device: torch.device, output_dir: Path) -> List[
             "Delta SSIM": metrics["delta_ssim"],
         }
         results.append(row)
+        save_results_csv(results, output_dir / "noise_study_results.csv")
         print(f"     Input PSNR: {row['Input PSNR (dB)']:.2f} dB -> Output PSNR: {row['Output PSNR (dB)']:.2f} dB ({row['Delta PSNR (dB)']:+.2f} dB)")
         print(f"     Input SSIM: {row['Input SSIM']:.4f} -> Output SSIM: {row['Output SSIM']:.4f} ({row['Delta SSIM']:+.4f})")
         
@@ -283,6 +284,7 @@ def run_bottleneck_study(args, device: torch.device, output_dir: Path) -> List[D
             "Delta SSIM": metrics["delta_ssim"],
         }
         results.append(row)
+        save_results_csv(results, output_dir / "bottleneck_study_results.csv")
         print(f"     Bottleneck: {btn} ch | Params: {latent_info['total_params']:,} | Compression: {row['Compression Ratio']}")
         print(f"     Output PSNR: {row['Output PSNR (dB)']:.2f} dB | Output SSIM: {row['Output SSIM']:.4f}")
         
@@ -356,12 +358,7 @@ def generate_markdown_report(noise_results: List[Dict[str, Any]], btn_results: L
             d_psnr = f"+{r['Delta PSNR (dB)']:.2f}" if r['Delta PSNR (dB)'] >= 0 else f"{r['Delta PSNR (dB)']:.2f}"
             report.append(f"| {r['Noise Type']} | {r['Noise Level']} | {r['Input PSNR (dB)']:.2f} | {r['Input SSIM']:.4f} | "
                           f"**{r['Output PSNR (dB)']:.2f}** | **{r['Output SSIM']:.4f}** | {d_psnr} |")
-        report.append("\n**Key Observations (Noise Levels):**")
-        report.append("- **Gaussian Noise**: As the noise standard deviation increases from $\\sigma=0.05$ to $\\sigma=0.30$, "
-                      "the baseline input image PSNR plummets from ~26 dB to ~10 dB. The DAE achieves massive relative gains "
-                      "($\\Delta\\text{PSNR} > +8\\text{ dB}$ at severe noise), effectively learning a smooth prior over natural image statistics.")
-        report.append("- **Salt & Pepper Noise**: At low corruption rates ($p=0.02$), the autoencoder almost completely inverts corrupted pixels. "
-                      "Even at high impulse rates ($p=0.20$), spatial neighborhood convolutions reconstruct missing high-frequency details with substantial fidelity.\n")
+        report.append("\n**Observations:** _write these from the table above._\n")
         
     if btn_results:
         report.append("## 2. Study 2: Reconstruction Performance vs Bottleneck Capacity\n")
@@ -371,14 +368,8 @@ def generate_markdown_report(noise_results: List[Dict[str, Any]], btn_results: L
             d_psnr = f"+{r['Delta PSNR (dB)']:.2f}" if r['Delta PSNR (dB)'] >= 0 else f"{r['Delta PSNR (dB)']:.2f}"
             report.append(f"| **{r['Bottleneck Channels']}** | {r['Total Parameters']:,} | {r['Compression Ratio']} | "
                           f"**{r['Output PSNR (dB)']:.2f}** | **{r['Output SSIM']:.4f}** | {d_psnr} |")
-        report.append("\n**Key Observations (Bottleneck Size):**")
-        report.append("- **Extreme Bottleneck (8 Channels, ~6x compression)**: Constraining the latent channel width forces high compression. "
-                      "While it effectively filters out high-frequency noise, it causes mild blurring of subtle textures.")
-        report.append("- **Optimal Bottleneck (32 to 64 Channels)**: Yields the highest PSNR and SSIM. The latent representation retains sufficient "
-                      "capacity to encode complex image geometry while still enforcing an information bottleneck that strips random noise.")
-        report.append("- **Diminishing Returns (128 Channels)**: Beyond 64 channels, performance plateaus, and parameter count increases without "
-                      "statistically significant PSNR improvement.\n")
-                      
+        report.append("\n**Observations:** _write these from the table above._\n")
+        
     report_text = "\n".join(report)
     with open(save_path, "w") as f:
         f.write(report_text)
