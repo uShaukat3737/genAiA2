@@ -7,3 +7,4 @@ data/
 checkpoints/
 *.pth
 *.tmp
+.venv/

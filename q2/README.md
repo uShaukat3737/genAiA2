@@ -11,6 +11,7 @@ auto-detects whether an input is a sketch or a photo and converts it.
 | `train.py` | End-to-end training, checkpoint every epoch, auto-resume |
 | `inference.py` | Load generators, sketch/photo detector, single-image CLI |
 | `app.py` + `templates/` + `static/` | Flask UI: upload, camera capture, live mode |
+| `run_local.sh` | Launches the UI on your machine with the checkpoint you trained on Colab |
 | `colab_run.ipynb` | Colab notebook covering the whole pipeline |
 | `test_cyclegan.py` | Smoke tests (`python -m pytest -q`) |
 
@@ -22,7 +23,7 @@ auto-detects whether an input is a sketch or a photo and converts it.
 
 ## Google Colab
 
-The easiest way is to open **`colab_run.ipynb`** and run it top to bottom. It goes through setup, a hyperparameter sweep, full training, monitoring, a test of both directions, and the web UI. The same steps as plain cells:
+The easiest way is to open **`colab_run.ipynb`** and run it top to bottom. It goes through setup, a hyperparameter sweep, full training, monitoring, a test of both directions, and exporting the model. The web UI runs on your own machine (see [Run the UI locally](#run-the-ui-locally)). The same steps as plain cells:
 
 ```python
 # 1. Code + Drive (checkpoints go to Drive so they survive disconnects)
@@ -57,10 +58,31 @@ from IPython.display import Image; Image('/content/drive/MyDrive/cyclegan_ckpt/s
 Rows in each sample grid: photo → its generated sketch, then sketch → its generated photo.
 
 ```python
-# 5. Web UI inside Colab
-!nohup python app.py --checkpoint /content/drive/MyDrive/cyclegan_ckpt/latest.pth --port 5000 > app.log 2>&1 &
-from google.colab.output import eval_js; print(eval_js("google.colab.kernel.proxyPort(5000)"))  # open this URL
+# 5. Export the generators (about 91 MB) for the local UI and download them
+import torch
+CKPT = '/content/drive/MyDrive/cyclegan_ckpt'
+s = torch.load(f'{CKPT}/latest.pth', map_location='cpu', weights_only=False)
+torch.save({k: s[k] for k in ('epoch', 'args', 'G_AB', 'G_BA')}, f'{CKPT}/cyclegan_final.pth')
+from google.colab import files; files.download(f'{CKPT}/cyclegan_final.pth')
 ```
+
+## Run the UI locally
+Training happens on Colab; the web UI runs on your computer.
+
+1. Get `cyclegan_final.pth` from the export step: the notebook downloads it, and a copy is also in your Drive checkpoint folder.
+2. Put it in `q2/checkpoints/`. That folder is git-ignored, so the weights never end up in the repo.
+3. Run the launcher:
+   ```bash
+   cd q2
+   ./run_local.sh                               # uses checkpoints/cyclegan_final.pth
+   ./run_local.sh checkpoints/epoch_030.pth     # or any other checkpoint
+   PORT=8000 ./run_local.sh                     # different port
+   ```
+   The first run creates `q2/.venv` and installs `requirements.txt` (torch is large, so this takes a few minutes). Later runs start straight away.
+4. Open http://127.0.0.1:5000. You can upload an image, or use the camera (browsers allow it on localhost). On a Mac it uses the Apple GPU (MPS) automatically.
+
+The image size and generator depth are read from the checkpoint, so no extra flags are needed. `latest.pth` and any `epoch_XXX.pth` work too; `cyclegan_final.pth` is just the smallest.
+
 
 ## What gets saved in the checkpoint dir
 - `latest.pth`: everything needed to resume (all 4 networks, both optimisers, LR schedulers, AMP scaler, epoch). It's written every epoch, and written atomically so a disconnect mid-save can't corrupt it.
@@ -75,7 +97,7 @@ python train.py --resume none ...                 # start fresh; ignores latest.
 python train.py --resume path/to/latest.pth ...   # resume from a specific file
 python train.py --epochs 60 ...                   # continue a finished run to 60 epochs; LR follows the new schedule
 python inference.py --checkpoint ckpt/latest.pth --input face.jpg --output sketch.png   # --direction auto|photo2sketch|sketch2photo
-python app.py --checkpoint ckpt/latest.pth --port 5000
+./run_local.sh checkpoints/cyclegan_final.pth                                         # local UI (venv + app.py)
 python -m pytest -q test_cyclegan.py
 ```
 
