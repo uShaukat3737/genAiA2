@@ -168,10 +168,12 @@ q1/
 ## Google Colab Quickstart
 
 To run on Google Colab:
-1. Upload the `q1/` directory to your Google Drive or Colab environment.
+1. Upload the `q1/` directory to `MyDrive/as2/q1` on Google Drive.
 2. Open `colab_run.ipynb` in Google Colab.
 3. Switch runtime to GPU: **Runtime -> Change runtime type -> Hardware accelerator -> T4 GPU**.
-4. Run all cells sequentially.
+4. Make sure **Edit -> Notebook settings -> "Omit code cell output when saving"** is off.
+5. Run all cells in order. Every script's console output is shown in the notebook and also appended to `q1/logs/<step>.log` on Drive. The *Full log* cells print those files back into the notebook.
+6. Download the executed notebook (**File -> Download -> .ipynb**) and commit it in place of `colab_run.ipynb`, so the graded notebook contains all outputs and logs.
 
 ---
 

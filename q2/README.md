@@ -88,6 +88,7 @@ The image size and generator depth are read from the checkpoint, so no extra fla
 - `latest.pth`: everything needed to resume (all 4 networks, both optimisers, LR schedulers, AMP scaler, epoch). It's written every epoch, and written atomically so a disconnect mid-save can't corrupt it.
 - `epoch_XXX.pth`: generator weights only, about 90 MB each, written every 5 epochs by default. Change the interval with `--snapshot_every N`, or turn them off with `0`. Overwritten Drive files still count toward your quota until you empty the Trash.
 - `history.csv`: average losses, LR and time for each epoch.
+- `logs/<step>.log`: the full console output of each notebook step, appended across sessions. The notebook's *Full log* cells print these back into the notebook. Keep "Omit code cell output when saving" off in Colab's notebook settings, and commit the executed notebook so the logs are part of the submission.
 - `samples/epoch_XXX.png`: a fixed preview grid for each epoch.
 
 ## CLI reference
