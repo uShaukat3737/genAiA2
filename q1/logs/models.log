@@ -1,0 +1,6 @@
+Model instantiated successfully!
+Input shape:  torch.Size([2, 3, 128, 128])
+Latent shape: (32, 32, 32) (32768 elements)
+Output shape: torch.Size([2, 3, 128, 128])
+Compression ratio: 1.50x
+Total parameters: 171,523

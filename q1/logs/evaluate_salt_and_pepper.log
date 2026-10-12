@@ -1,0 +1,21 @@
+===========================================================
+ Evaluating Denoising Autoencoder on BSDS500 [TEST]
+ Checkpoint:      best_model.pth
+ Architecture:    Bottleneck=32, BaseChannels=32
+ Noise Type:      salt_and_pepper (param=0.1)
+ Device:          cuda
+===========================================================
+
+------------------- Evaluation Results --------------------
+ Total Evaluated Images:  200
+ Input (Noisy) MSE:       0.03183
+ Input (Noisy) PSNR:      14.99 dB
+ Input (Noisy) SSIM:      0.3360
+ Output (Denoised) MSE:   0.00211
+ Output (Denoised) PSNR:  27.66 dB
+ Output (Denoised) SSIM:  0.8563
+ PSNR Improvement:        +12.67 dB
+ SSIM Improvement:        +0.5203
+-----------------------------------------------------------
+[Evaluation] Metrics saved to: results/metrics_best_model_salt_and_pepper_0.1.json
+[Evaluation] Visualization grid saved to: results/visualization_best_model_salt_and_pepper_0.1.png

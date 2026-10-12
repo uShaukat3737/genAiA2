@@ -1,0 +1,21 @@
+===========================================================
+ Evaluating Denoising Autoencoder on BSDS500 [TEST]
+ Checkpoint:      best_model.pth
+ Architecture:    Bottleneck=32, BaseChannels=32
+ Noise Type:      gaussian (param=0.15)
+ Device:          cuda
+===========================================================
+
+------------------- Evaluation Results --------------------
+ Total Evaluated Images:  200
+ Input (Noisy) MSE:       0.01976
+ Input (Noisy) PSNR:      17.05 dB
+ Input (Noisy) SSIM:      0.3537
+ Output (Denoised) MSE:   0.00281
+ Output (Denoised) PSNR:  26.00 dB
+ Output (Denoised) SSIM:  0.7766
+ PSNR Improvement:        +8.95 dB
+ SSIM Improvement:        +0.4229
+-----------------------------------------------------------
+[Evaluation] Metrics saved to: results/metrics_best_model_gaussian_0.15.json
+[Evaluation] Visualization grid saved to: results/visualization_best_model_gaussian_0.15.png

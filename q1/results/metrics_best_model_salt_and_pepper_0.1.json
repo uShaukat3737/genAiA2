@@ -1,0 +1,16 @@
+{
+  "input_mse": 0.031830640314146876,
+  "input_psnr": 14.990838137433366,
+  "input_ssim": 0.33604884542524815,
+  "output_mse": 0.0021108510391786694,
+  "output_psnr": 27.663414360462966,
+  "output_ssim": 0.8563488093018532,
+  "delta_psnr": 12.6725762230296,
+  "delta_ssim": 0.520299963876605,
+  "total_evaluated_samples": 200,
+  "checkpoint": "checkpoints/dae_salt_and_pepper_p0.1_btn32_mse/best_model.pth",
+  "split": "test",
+  "noise_type": "salt_and_pepper",
+  "noise_param": 0.1,
+  "bottleneck": 32
+}

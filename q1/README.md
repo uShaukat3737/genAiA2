@@ -124,7 +124,7 @@ Visualizations display three synchronized rows:
 
 ## Experimental Study & Findings
 
-All numbers come from the Colab run on a Tesla T4 (`colab_run.ipynb`). Full outputs, plots and CSVs are in `experiments_output/` on Drive.
+All numbers come from the Colab run on a Tesla T4 (`colab_run.ipynb`). Plots and CSVs are in `experiments_output/`, test-set grids and metrics in `results/`, and full console logs in `logs/`.
 
 ### Main models (35 epochs, bottleneck 32, test split of 200 images)
 
