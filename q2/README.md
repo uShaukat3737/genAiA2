@@ -136,4 +136,13 @@ The cycle and identity losses were still falling at the last epoch while the dis
 
 **Auto-detection:** on 500 held-out photos and 500 held-out sketches, `inference.is_sketch` labelled 498/500 photos and 500/500 sketches correctly, for **99.8%** overall.
 
-**UI:** *(add a screenshot of the web UI converting an uploaded image and a camera frame)*
+**UI** (run locally on an M-series Mac with `python3 app.py --checkpoint checkpoints/cyclegan_final.pth`):
+
+| Camera frame → sketch | Camera frame → sketch | Uploaded sketch → photo |
+|---|---|---|
+| ![camera 1](results/ui_1.png) | ![camera 2](results/ui_2.png) | ![upload](results/ui_3.png) |
+
+- The auto-detector picked the right direction every time: the webcam frames were labelled *photo* and the uploaded drawing *sketch*.
+- Inference takes about 160 ms for a camera frame and 750 ms for an uploaded image (the upload is larger and gets resized first).
+- **Camera → sketch is poor.** The model draws the background (the bed, the wall tiles) more strongly than the face, and only the eyes, glasses and mouth come through as scattered strokes. This is a domain gap: the training photos are centred, well-lit portraits on plain backgrounds, while the webcam frames are dim, off-centre and cluttered. On test-set photos (notebook section 7) the same model produces clean sketches.
+- **Uploaded sketch → photo is usable.** The facial structure, hair and sweater are kept and given plausible skin and hair colour, but the result is washed out and blurry, with some checkerboard texture around the eyes. That matches the test-set behaviour described above.
