@@ -1,0 +1,96 @@
+Running Experimental Study on Device: cuda
+
+=================================================================
+ [STUDY 1] Analyzing Reconstruction Performance vs Noise Levels
+=================================================================
+
+---> Training & Evaluating: Gaussian (std=0.05) | Bottleneck: 32 channels
+Saved results table to: experiments_output/noise_study_results.csv
+     Input PSNR: 26.19 dB -> Output PSNR: 27.15 dB (+0.96 dB)
+     Input SSIM: 0.7115 -> Output SSIM: 0.8332 (+0.1217)
+
+---> Training & Evaluating: Gaussian (std=0.10) | Bottleneck: 32 channels
+Running Experimental Study on Device: cuda
+
+=================================================================
+ [STUDY 1] Analyzing Reconstruction Performance vs Noise Levels
+=================================================================
+
+---> Training & Evaluating: Gaussian (std=0.05) | Bottleneck: 32 channels
+Saved results table to: experiments_output/noise_study_results.csv
+     Input PSNR: 26.19 dB -> Output PSNR: 27.12 dB (+0.92 dB)
+     Input SSIM: 0.7115 -> Output SSIM: 0.8350 (+0.1234)
+
+---> Training & Evaluating: Gaussian (std=0.10) | Bottleneck: 32 channels
+Saved results table to: experiments_output/noise_study_results.csv
+     Input PSNR: 20.35 dB -> Output PSNR: 26.08 dB (+5.73 dB)
+     Input SSIM: 0.4834 -> Output SSIM: 0.7875 (+0.3041)
+
+---> Training & Evaluating: Gaussian (std=0.20) | Bottleneck: 32 channels
+Saved results table to: experiments_output/noise_study_results.csv
+     Input PSNR: 14.83 dB -> Output PSNR: 24.53 dB (+9.70 dB)
+     Input SSIM: 0.2733 -> Output SSIM: 0.7069 (+0.4335)
+
+---> Training & Evaluating: Gaussian (std=0.30) | Bottleneck: 32 channels
+Saved results table to: experiments_output/noise_study_results.csv
+     Input PSNR: 11.97 dB -> Output PSNR: 23.37 dB (+11.39 dB)
+     Input SSIM: 0.1814 -> Output SSIM: 0.6501 (+0.4687)
+
+---> Training & Evaluating: S&P (p=0.02) | Bottleneck: 32 channels
+Saved results table to: experiments_output/noise_study_results.csv
+     Input PSNR: 22.00 dB -> Output PSNR: 26.70 dB (+4.70 dB)
+     Input SSIM: 0.7278 -> Output SSIM: 0.8306 (+0.1027)
+
+---> Training & Evaluating: S&P (p=0.05) | Bottleneck: 32 channels
+Saved results table to: experiments_output/noise_study_results.csv
+     Input PSNR: 18.02 dB -> Output PSNR: 26.41 dB (+8.38 dB)
+     Input SSIM: 0.5084 -> Output SSIM: 0.8170 (+0.3086)
+
+---> Training & Evaluating: S&P (p=0.10) | Bottleneck: 32 channels
+Saved results table to: experiments_output/noise_study_results.csv
+     Input PSNR: 15.00 dB -> Output PSNR: 25.95 dB (+10.95 dB)
+     Input SSIM: 0.3366 -> Output SSIM: 0.7982 (+0.4616)
+
+---> Training & Evaluating: S&P (p=0.20) | Bottleneck: 32 channels
+Saved results table to: experiments_output/noise_study_results.csv
+     Input PSNR: 11.99 dB -> Output PSNR: 25.27 dB (+13.28 dB)
+     Input SSIM: 0.2017 -> Output SSIM: 0.7665 (+0.5647)
+[Study 1] Saved plot to: experiments_output/noise_study_curves.png
+Saved results table to: experiments_output/noise_study_results.csv
+
+=================================================================
+ [STUDY 2] Analyzing Reconstruction Performance vs Bottleneck Sizes
+=================================================================
+
+---> Training & Evaluating Bottleneck Size: 8 channels | Noise: Gaussian (std=0.15)
+Saved results table to: experiments_output/bottleneck_study_results.csv
+     Bottleneck: 8 ch | Params: 143,827 | Compression: 6.00x
+     Output PSNR: 24.73 dB | Output SSIM: 0.7221
+
+---> Training & Evaluating Bottleneck Size: 16 channels | Noise: Gaussian (std=0.15)
+Saved results table to: experiments_output/bottleneck_study_results.csv
+     Bottleneck: 16 ch | Params: 153,059 | Compression: 3.00x
+     Output PSNR: 25.03 dB | Output SSIM: 0.7374
+
+---> Training & Evaluating Bottleneck Size: 32 channels | Noise: Gaussian (std=0.15)
+Saved results table to: experiments_output/bottleneck_study_results.csv
+     Bottleneck: 32 ch | Params: 171,523 | Compression: 1.50x
+     Output PSNR: 25.27 dB | Output SSIM: 0.7485
+
+---> Training & Evaluating Bottleneck Size: 64 channels | Noise: Gaussian (std=0.15)
+Saved results table to: experiments_output/bottleneck_study_results.csv
+     Bottleneck: 64 ch | Params: 208,451 | Compression: 0.75x
+     Output PSNR: 25.54 dB | Output SSIM: 0.7563
+
+---> Training & Evaluating Bottleneck Size: 128 channels | Noise: Gaussian (std=0.15)
+Saved results table to: experiments_output/bottleneck_study_results.csv
+     Bottleneck: 128 ch | Params: 282,307 | Compression: 0.38x
+     Output PSNR: 25.54 dB | Output SSIM: 0.7580
+[Study 2] Saved plot to: experiments_output/bottleneck_study_curves.png
+Saved results table to: experiments_output/bottleneck_study_results.csv
+Generated comprehensive report at: experiments_output/experimental_study_report.md
+
+===========================================================
+ Experimental Study successfully completed!
+ All plots, CSVs, and markdown reports saved to: /content/drive/MyDrive/as2/q1/experiments_output
+===========================================================

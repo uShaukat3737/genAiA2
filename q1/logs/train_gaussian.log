@@ -1,0 +1,49 @@
+===========================================================
+ Starting Denoising Autoencoder Training
+ Device:         cuda
+ Noise Type:     gaussian (param=0.15)
+ Bottleneck Ch:  32
+ Loss Function:  mse
+ Epochs:         35 | Batch Size: 16 | LR: 0.001
+===========================================================
+[Model] Latent shape: (32, 32, 32), Parameters: 171,523
+Epoch [01/35] Train Loss: 0.01301 | Val Loss: 0.00915 | Val PSNR: 20.99 dB | Val SSIM: 0.5928 | Time: 18.1s
+Epoch [02/35] Train Loss: 0.00822 | Val Loss: 0.00761 | Val PSNR: 21.98 dB | Val SSIM: 0.6337 | Time: 13.6s
+Epoch [03/35] Train Loss: 0.00770 | Val Loss: 0.00593 | Val PSNR: 23.00 dB | Val SSIM: 0.6639 | Time: 13.4s
+Epoch [04/35] Train Loss: 0.00645 | Val Loss: 0.00721 | Val PSNR: 22.06 dB | Val SSIM: 0.6830 | Time: 13.6s
+Epoch [05/35] Train Loss: 0.00615 | Val Loss: 0.00546 | Val PSNR: 23.24 dB | Val SSIM: 0.6844 | Time: 12.5s
+Epoch [06/35] Train Loss: 0.00585 | Val Loss: 0.00782 | Val PSNR: 21.51 dB | Val SSIM: 0.6879 | Time: 12.6s
+Epoch [07/35] Train Loss: 0.00577 | Val Loss: 0.00500 | Val PSNR: 23.68 dB | Val SSIM: 0.7180 | Time: 12.1s
+Epoch [08/35] Train Loss: 0.00554 | Val Loss: 0.00453 | Val PSNR: 24.07 dB | Val SSIM: 0.7239 | Time: 13.4s
+Epoch [09/35] Train Loss: 0.00532 | Val Loss: 0.00479 | Val PSNR: 23.71 dB | Val SSIM: 0.7117 | Time: 13.5s
+Epoch [10/35] Train Loss: 0.00559 | Val Loss: 0.00444 | Val PSNR: 24.13 dB | Val SSIM: 0.7254 | Time: 14.0s
+Epoch [11/35] Train Loss: 0.00488 | Val Loss: 0.00445 | Val PSNR: 24.09 dB | Val SSIM: 0.7242 | Time: 13.6s
+Epoch [12/35] Train Loss: 0.00473 | Val Loss: 0.00571 | Val PSNR: 22.97 dB | Val SSIM: 0.7267 | Time: 13.6s
+Epoch [13/35] Train Loss: 0.00488 | Val Loss: 0.00379 | Val PSNR: 24.82 dB | Val SSIM: 0.7446 | Time: 13.7s
+Epoch [14/35] Train Loss: 0.00445 | Val Loss: 0.00371 | Val PSNR: 24.95 dB | Val SSIM: 0.7497 | Time: 13.6s
+Epoch [15/35] Train Loss: 0.00437 | Val Loss: 0.00383 | Val PSNR: 24.75 dB | Val SSIM: 0.7500 | Time: 13.6s
+Epoch [16/35] Train Loss: 0.00413 | Val Loss: 0.00507 | Val PSNR: 23.36 dB | Val SSIM: 0.7398 | Time: 13.6s
+Epoch [17/35] Train Loss: 0.00423 | Val Loss: 0.00392 | Val PSNR: 24.70 dB | Val SSIM: 0.7424 | Time: 13.5s
+Epoch [18/35] Train Loss: 0.00423 | Val Loss: 0.00379 | Val PSNR: 24.88 dB | Val SSIM: 0.7593 | Time: 14.1s
+Epoch [19/35] Train Loss: 0.00393 | Val Loss: 0.00328 | Val PSNR: 25.45 dB | Val SSIM: 0.7612 | Time: 13.5s
+Epoch [20/35] Train Loss: 0.00398 | Val Loss: 0.00388 | Val PSNR: 24.66 dB | Val SSIM: 0.7451 | Time: 13.7s
+Epoch [21/35] Train Loss: 0.00359 | Val Loss: 0.00338 | Val PSNR: 25.26 dB | Val SSIM: 0.7608 | Time: 13.5s
+Epoch [22/35] Train Loss: 0.00395 | Val Loss: 0.00310 | Val PSNR: 25.71 dB | Val SSIM: 0.7664 | Time: 13.6s
+Epoch [23/35] Train Loss: 0.00370 | Val Loss: 0.00324 | Val PSNR: 25.47 dB | Val SSIM: 0.7592 | Time: 12.8s
+Epoch [24/35] Train Loss: 0.00344 | Val Loss: 0.00365 | Val PSNR: 24.94 dB | Val SSIM: 0.7647 | Time: 12.9s
+Epoch [25/35] Train Loss: 0.00330 | Val Loss: 0.00338 | Val PSNR: 25.24 dB | Val SSIM: 0.7568 | Time: 12.9s
+Epoch [26/35] Train Loss: 0.00321 | Val Loss: 0.00322 | Val PSNR: 25.52 dB | Val SSIM: 0.7654 | Time: 12.9s
+Epoch [27/35] Train Loss: 0.00319 | Val Loss: 0.00298 | Val PSNR: 25.88 dB | Val SSIM: 0.7704 | Time: 13.1s
+Epoch [28/35] Train Loss: 0.00323 | Val Loss: 0.00293 | Val PSNR: 25.97 dB | Val SSIM: 0.7729 | Time: 13.2s
+Epoch [29/35] Train Loss: 0.00322 | Val Loss: 0.00299 | Val PSNR: 25.88 dB | Val SSIM: 0.7743 | Time: 13.4s
+Epoch [30/35] Train Loss: 0.00317 | Val Loss: 0.00311 | Val PSNR: 25.62 dB | Val SSIM: 0.7743 | Time: 13.2s
+Epoch [31/35] Train Loss: 0.00309 | Val Loss: 0.00295 | Val PSNR: 25.95 dB | Val SSIM: 0.7733 | Time: 13.8s
+Epoch [32/35] Train Loss: 0.00307 | Val Loss: 0.00289 | Val PSNR: 26.03 dB | Val SSIM: 0.7721 | Time: 13.4s
+Epoch [33/35] Train Loss: 0.00294 | Val Loss: 0.00290 | Val PSNR: 26.04 dB | Val SSIM: 0.7726 | Time: 13.3s
+Epoch [34/35] Train Loss: 0.00290 | Val Loss: 0.00290 | Val PSNR: 26.00 dB | Val SSIM: 0.7726 | Time: 13.5s
+Epoch [35/35] Train Loss: 0.00297 | Val Loss: 0.00286 | Val PSNR: 26.07 dB | Val SSIM: 0.7779 | Time: 13.7s
+-----------------------------------------------------------
+Training completed in 8.38 minutes.
+Best Validation PSNR: 26.07 dB
+Saved artifacts to:   checkpoints/dae_gaussian_p0.15_btn32_mse
+-----------------------------------------------------------
