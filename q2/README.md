@@ -107,15 +107,33 @@ The detector is a heuristic in `inference.is_sketch`. An image counts as a sketc
 is below 0.12 and more than 35% of its pixels are bright. If it gets an image wrong, the UI has a manual direction
 selector that overrides it.
 
-## Results (fill in after the Colab run)
-> Nothing below has been measured yet. Copy it from the notebook outputs.
+## Results
+From the Colab run on a Tesla T4 (`colab_run.ipynb`). Training used the `train/` split (20,655 photos and 20,655 sketches); `test/` was held out.
 
-**Hyperparameter tuning:** the table from notebook section 4 (final-epoch `loss_cycle` for each lr/batch size), plus which setting you picked and why.
+**Hyperparameter tuning** (3 epochs, 128 px, 1,000 images per domain, final epoch):
 
-**Training curves:** the loss plot and the last rows of `history.csv` from section 6. Note how many epochs you trained and roughly how long each took.
+| Run | loss_G | loss_D | loss_cycle | loss_idt | s/epoch |
+|---|---|---|---|---|---|
+| lr 1e-4, batch 1 | 4.017 | 0.326 | **2.196** | 0.950 | 104 |
+| lr 2e-4, batch 4 | 4.012 | 0.395 | 2.247 | 0.990 | 58 |
+| lr 2e-4, batch 1 | 4.183 | 0.290 | 2.312 | 0.977 | 107 |
 
-**Qualitative results:** a sample grid from the final epoch and the two section 7 outputs (photo → sketch, sketch → photo), with a short comment on what works and what fails.
+We picked lr 1e-4 with batch size 1 because it had the lowest cycle-consistency loss. The three settings are close, and after only 3 epochs the differences are within run-to-run noise, so this was a narrow choice. Batch size 4 was almost twice as fast per epoch.
 
-**Auto-detection:** the accuracy printed by the detector cell in section 7.
+**Training:** 20 epochs at 256 px on 1,500 images per domain, about 6.2 minutes per epoch (about 2 hours total).
 
-**UI:** a screenshot of the web UI converting an uploaded image and a camera frame.
+| Epoch | loss_G | loss_D | loss_gan | loss_cycle | loss_idt |
+|---|---|---|---|---|---|
+| 16 | 2.947 | 0.288 | 0.949 | 1.474 | 0.524 |
+| 18 | 2.773 | 0.284 | 0.927 | 1.364 | 0.482 |
+| 20 | 2.595 | 0.290 | 0.867 | 1.276 | 0.452 |
+
+The cycle and identity losses were still falling at the last epoch while the discriminator loss stayed steady around 0.29, so the model had not converged. More epochs or more images would likely improve it.
+
+**Qualitative results** (sample grid in notebook section 6, test outputs in section 7):
+- **Photo → sketch works well.** Outputs are clean pencil-style line drawings with the eyes, nose, mouth and hairline in the right places, and they are recognisable as the input person.
+- **Sketch → photo is weak.** Outputs have plausible hair and skin colours, but the faces are warped and blotchy, with checkerboard artefacts. This direction is much harder, because the generator has to invent colour, shading and skin texture that a line drawing doesn't contain. The small training budget (1,500 images, 20 epochs) hurts it most.
+
+**Auto-detection:** on 500 held-out photos and 500 held-out sketches, `inference.is_sketch` labelled 498/500 photos and 500/500 sketches correctly, for **99.8%** overall.
+
+**UI:** *(add a screenshot of the web UI converting an uploaded image and a camera frame)*

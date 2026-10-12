@@ -124,27 +124,51 @@ Visualizations display three synchronized rows:
 
 ## Experimental Study & Findings
 
-> **Results pending: these come from the Colab run.** Run the *Experimental Study* section of `colab_run.ipynb`.
-> It trains one model per setting and writes everything to `experiments_output/`:
-> - `noise_study_results.csv` and `noise_study_curves.png`
-> - `bottleneck_study_results.csv` and `bottleneck_study_curves.png`
-> - `experimental_study_report.md`, which has both tables in Markdown
->
-> Paste the two tables from `experimental_study_report.md` below, then write the observations from those numbers.
+All numbers come from the Colab run on a Tesla T4 (`colab_run.ipynb`). Full outputs, plots and CSVs are in `experiments_output/` on Drive.
+
+### Main models (35 epochs, bottleneck 32, test split of 200 images)
+
+| Model | Noisy PSNR / SSIM | Denoised PSNR / SSIM | ΔPSNR | ΔSSIM |
+|---|---|---|---|---|
+| Gaussian σ = 0.15 | 17.05 dB / 0.354 | **26.00 dB / 0.777** | +8.95 dB | +0.423 |
+| Salt-and-pepper p = 0.10 | 14.99 dB / 0.336 | **27.66 dB / 0.856** | +12.67 dB | +0.520 |
+
+Both models remove the noise almost completely. The reconstructions are slightly blurred, which is visible on fine texture such as fur and coral.
 
 ### Study 1: Impact of Noise Intensity
-Bottleneck fixed at 32 channels. Gaussian σ ∈ {0.05, 0.10, 0.20, 0.30}; salt-and-pepper p ∈ {0.02, 0.05, 0.10, 0.20}.
+Bottleneck fixed at 32 channels, 20 epochs per setting. Gaussian σ ∈ {0.05, 0.10, 0.20, 0.30}; salt-and-pepper p ∈ {0.02, 0.05, 0.10, 0.20}.
 
-*(table from `experimental_study_report.md`)*
+| Noise | Level | Input PSNR (dB) | Output PSNR (dB) | ΔPSNR (dB) | Output SSIM |
+|---|---|---|---|---|---|
+| Gaussian | 0.05 | 26.19 | 27.12 | +0.92 | 0.835 |
+| Gaussian | 0.10 | 20.35 | 26.08 | +5.73 | 0.788 |
+| Gaussian | 0.20 | 14.83 | 24.53 | +9.70 | 0.707 |
+| Gaussian | 0.30 | 11.97 | 23.37 | +11.39 | 0.650 |
+| Salt-and-pepper | 0.02 | 22.00 | 26.70 | +4.70 | 0.831 |
+| Salt-and-pepper | 0.05 | 18.02 | 26.41 | +8.38 | 0.817 |
+| Salt-and-pepper | 0.10 | 15.00 | 25.95 | +10.95 | 0.798 |
+| Salt-and-pepper | 0.20 | 11.99 | 25.27 | +13.28 | 0.766 |
 
-**Observations:** *(fill in after the run: how ΔPSNR/SSIM change with noise level, Gaussian vs salt-and-pepper)*
+**Observations:**
+- The gain grows with the noise level: from +0.9 dB at σ = 0.05 to +11.4 dB at σ = 0.30, and from +4.7 dB to +13.3 dB for salt-and-pepper. Output quality still falls as noise rises, but much more slowly than the input quality does.
+- At σ = 0.05 the gain is almost zero. The input is already at 26.2 dB, and the slight blur the autoencoder adds caps the output near 27 dB, so it can barely beat the noisy image.
+- Salt-and-pepper degrades much more gently than Gaussian. Output PSNR only drops 1.4 dB from p = 0.02 to p = 0.20, against 3.8 dB for Gaussian from σ = 0.05 to 0.30. Impulse noise leaves most pixels untouched, so the network can fill in corrupted pixels from clean neighbours. Gaussian noise corrupts every pixel.
 
 ### Study 2: Impact of Bottleneck Size
-Gaussian noise σ = 0.15; bottleneck channels ∈ {8, 16, 32, 64, 128}. With 64 and 128 channels the latent is *larger* than the input (compression 0.75× and 0.38×), so those settings don't act as a real bottleneck. Mention this in the discussion.
+Gaussian noise σ = 0.15, 20 epochs per setting; bottleneck channels ∈ {8, 16, 32, 64, 128}.
 
-*(table from `experimental_study_report.md`)*
+| Bottleneck channels | Parameters | Compression ratio | Output PSNR (dB) | Output SSIM | ΔPSNR (dB) |
+|---|---|---|---|---|---|
+| 8 | 143,827 | 6.00× | 24.73 | 0.722 | +7.67 |
+| 16 | 153,059 | 3.00× | 25.03 | 0.737 | +7.98 |
+| 32 | 171,523 | 1.50× | 25.27 | 0.749 | +8.21 |
+| 64 | 208,451 | 0.75× | 25.54 | 0.756 | +8.48 |
+| 128 | 282,307 | 0.38× | 25.54 | 0.758 | +8.49 |
 
-**Observations:** *(fill in after the run: quality vs compression ratio and parameter count, where the gains level off)*
+**Observations:**
+- Quality rises steadily with capacity up to 64 channels (+0.8 dB from 8 to 64), then levels off: 128 channels adds nothing in PSNR and only +0.002 SSIM for 35% more parameters.
+- Even the tightest bottleneck (8 channels, 6× compression) still gives +7.7 dB. Most of the denoising works under strong compression, and the extra capacity mainly recovers fine detail.
+- At 64 and 128 channels the latent is *larger* than the input (compression 0.75× and 0.38×), so these settings are overcomplete and don't act as a real bottleneck. Their quality plateau suggests the limit there is the encoder/decoder and the training budget, not the latent size.
 
 ---
 
